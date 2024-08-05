@@ -1,26 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
 			http://www.springframework.org/schema/integration/spring-integration.xsd">
 
 	<channel id="wharehousechannel"/>
-	<channel id="shippingchannel"/>
+	<channel id="orderTypeRouterChannel"/>
+	<channel id="domesticOrderChannel"/>
+	<channel id="internationalShippingChannel"/>
+	<channel id="amountRouterChannel"/>
+	<channel id="nextDayShippingChannel"/>
+	<channel id="normalShippingChannel"/>
 
 	<service-activator input-channel="wharehousechannel"
-	                   output-channel="shippingchannel"
-	                   ref="warehouseservice"
-	                   method="checkStock"/>
-	                   
-	<service-activator input-channel="shippingchannel"
-	                   ref="shippingservice"
-	                   method="ship"/>
-	                   
-	<beans:bean id="warehouseservice" class="esb.WarehouseActivator"/>
-	<beans:bean id="shippingservice" class="esb.ShippingActivator"/>
+					   output-channel="orderTypeRouterChannel"
+					   ref="warehouseservice"
+					   method="checkStock"/>
 
-	
+	<router input-channel="orderTypeRouterChannel"
+			expression="payload.orderType == 'international' ? 'internationalShippingChannel' : 'domesticOrderChannel'"/>
+
+	<router input-channel="domesticOrderChannel"
+			expression="payload.amount > 175 ? 'nextDayShippingChannel' : 'normalShippingChannel'"/>
+
+	<service-activator input-channel="internationalShippingChannel"
+					   ref="internationalShippingService"
+					   method="internationalShip"/>
+
+	<service-activator input-channel="nextDayShippingChannel"
+					   ref="nextDayShippingService"
+					   method="nextDayShip"/>
+
+	<service-activator input-channel="normalShippingChannel"
+					   ref="normalShippingService"
+					   method="normalShip"/>
+
+	<beans:bean id="warehouseservice" class="esb.WarehouseActivator"/>
+	<beans:bean id="internationalShippingService" class="esb.ShippingActivator"/>
+	<beans:bean id="nextDayShippingService" class="esb.ShippingActivator"/>
+	<beans:bean id="normalShippingService" class="esb.ShippingActivator"/>
 </beans:beans>
