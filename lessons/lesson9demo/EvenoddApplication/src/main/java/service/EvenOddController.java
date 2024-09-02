@@ -11,4 +11,9 @@ public class EvenOddController {
     public String isNumberPrime(@RequestParam("number") Integer number) {
         return number % 2 == 0 ? "Even" : "Odd";
     }
+
+    @GetMapping("/double")
+    public String add(@RequestParam("number") Integer number) {
+        return number+number+"";
+    }
 } 

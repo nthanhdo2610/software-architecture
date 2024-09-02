@@ -15,14 +15,18 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 @DirtiesContext
 @AutoConfigureMessageVerifier
 public class BaseTestClass {
- 
+
     @Autowired
     private EvenOddController evenOddController;
- 
+
+    @Autowired
+    private CalculatorController calculatorController;
+
     @BeforeEach
     public void setup() {
-        StandaloneMockMvcBuilder standaloneMockMvcBuilder 
-          = MockMvcBuilders.standaloneSetup(evenOddController);
+        StandaloneMockMvcBuilder standaloneMockMvcBuilder =
+
+                MockMvcBuilders.standaloneSetup(evenOddController,calculatorController);
         RestAssuredMockMvc.standaloneSetup(standaloneMockMvcBuilder);
     }
 }

@@ -1,17 +1,17 @@
 import org.springframework.cloud.contract.spec.Contract
 Contract.make {
-	description "should return even when number input is even"
+	description "add 2 numbers"
 	request{
 		method GET()
-		url("/validate") {
+		url("/add") {
 			queryParameters {
-				parameter("number1", "2")
-				parameter("number2", "2")
+				parameter("value1", "2")
+				parameter("value2", "5")
 			}
 		}
 	}
 	response {
-		body("Even")
+		body("7")
 		status 200
 	}
 }

@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.springcloud</groupId>
-	<artifactId>ServiceOne</artifactId>
+	<artifactId>ProductService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ServiceOne</name>
-	<description>ServiceOne</description>
+	<name>ProductService</name>
+	<description>ProductService</description>
 
 	<properties>
 		<java.version>11</java.version>

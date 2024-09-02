@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ServiceTwoController {
-	private static final Logger logger = LoggerFactory.getLogger(ServiceTwoController.class.getName());
+public class StockController {
+	private static final Logger logger = LoggerFactory.getLogger(StockController.class.getName());
 
     @RequestMapping("/text")
     public String getText() {
