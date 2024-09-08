@@ -1,0 +1,15 @@
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/nthanhdo2610/springcloud.git
+          default-label: main  # Ensure you're using the correct branch
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, info

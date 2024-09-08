@@ -1,0 +1,11 @@
+server:
+  port: 9092
+spring:
+  cloud:
+    stream:
+      bindings:
+        productChange-in-0:
+          destination: product-changes
+      kafka:
+        binder:
+          brokers: localhost:9092

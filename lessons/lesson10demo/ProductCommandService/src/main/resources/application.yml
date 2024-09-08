@@ -1,0 +1,16 @@
+server:
+  port: 8081
+
+spring:
+  data:
+    mongodb:
+      database: productdb
+      uri: mongodb://localhost:27017/productdb
+  cloud:
+    stream:
+      bindings:
+        productChange-out-0:
+          destination: product-changes
+      kafka:
+        binder:
+          brokers: localhost:9092
