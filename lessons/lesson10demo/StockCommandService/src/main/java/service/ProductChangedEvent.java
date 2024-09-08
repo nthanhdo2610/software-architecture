@@ -9,7 +9,6 @@ public class ProductChangedEvent {
     private double price;
     private int quantity;
 
-    // Constructor, getters, setters
     public ProductChangedEvent(String productNumber, String name, double price, int quantity) {
         this.productNumber = productNumber;
         this.name = name;

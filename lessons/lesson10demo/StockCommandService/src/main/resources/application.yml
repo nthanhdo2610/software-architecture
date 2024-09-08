@@ -1,2 +1,17 @@
 server:
   port: 9091
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: productdb
+
+  cloud:
+    stream:
+      bindings:
+        productChange-out-0:
+          destination: product-changes
+      kafka:
+        binder:
+          brokers: localhost:9092

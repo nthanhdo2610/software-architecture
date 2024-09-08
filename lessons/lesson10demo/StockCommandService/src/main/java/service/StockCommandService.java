@@ -1,7 +1,7 @@
 package service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,19 +11,13 @@ public class StockCommandService {
     private StockRepository stockRepository;
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private StreamBridge streamBridge;
 
     public Stock addStock(Stock stock) {
         Stock savedStock = stockRepository.save(stock);
 
-        // Emit event
-        Product product = productRepository.findByProductNumber(stock.getProductNumber());
-        if (product != null) {
-            eventPublisher.publishEvent(new ProductChangedEvent(product.getProductNumber(), product.getName(), product.getPrice(), stock.getQuantity()));
-        }
+        ProductChangedEvent event = new ProductChangedEvent(stock.getProductNumber(), "", 0, savedStock.getQuantity());
+        streamBridge.send("productChange-out-0", event);
 
         return savedStock;
     }
@@ -34,11 +28,8 @@ public class StockCommandService {
 
         Stock updatedStock = stockRepository.save(existingStock);
 
-        // Emit event
-        Product product = productRepository.findByProductNumber(productNumber);
-        if (product != null) {
-            eventPublisher.publishEvent(new ProductChangedEvent(product.getProductNumber(), product.getName(), product.getPrice(), stock.getQuantity()));
-        }
+        ProductChangedEvent event = new ProductChangedEvent(productNumber, "", 0, updatedStock.getQuantity());
+        streamBridge.send("productChange-out-0", event);
 
         return updatedStock;
     }
@@ -46,10 +37,7 @@ public class StockCommandService {
     public void deleteStock(String productNumber) {
         stockRepository.deleteByProductNumber(productNumber);
 
-        // Emit event with 0 quantity (as stock is deleted)
-        Product product = productRepository.findByProductNumber(productNumber);
-        if (product != null) {
-            eventPublisher.publishEvent(new ProductChangedEvent(product.getProductNumber(), product.getName(), product.getPrice(), 0));
-        }
+        ProductChangedEvent event = new ProductChangedEvent(productNumber, null, 0, 0);
+        streamBridge.send("productChange-out-0", event);
     }
 }

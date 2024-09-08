@@ -11,22 +11,13 @@ public class ProductCommandService {
     private ProductRepository productRepository;
 
     @Autowired
-    private StockRepository stockRepository;
-
-    @Autowired
     private StreamBridge streamBridge;
 
     public Product addProduct(Product product) {
         Product savedProduct = productRepository.save(product);
 
-        // Get stock quantity
-        Stock stock = stockRepository.findByProductNumber(product.getProductNumber());
-        int stockQuantity = (stock != null) ? stock.getQuantity() : 0;
-
-        // Publish event to Kafka
-        streamBridge.send("productChange-out-0", new ProductChangedEvent(
-                product.getProductNumber(), product.getName(), product.getPrice(), stockQuantity
-        ));
+        ProductChangedEvent event = new ProductChangedEvent(savedProduct.getProductNumber(), savedProduct.getName(), savedProduct.getPrice(), 0);
+        streamBridge.send("productChange-out-0", event);
 
         return savedProduct;
     }
@@ -38,14 +29,8 @@ public class ProductCommandService {
 
         Product updatedProduct = productRepository.save(existingProduct);
 
-        // Get stock quantity
-        Stock stock = stockRepository.findByProductNumber(productNumber);
-        int stockQuantity = (stock != null) ? stock.getQuantity() : 0;
-
-        // Publish event to Kafka
-        streamBridge.send("productChange-out-0", new ProductChangedEvent(
-                product.getProductNumber(), product.getName(), product.getPrice(), stockQuantity
-        ));
+        ProductChangedEvent event = new ProductChangedEvent(updatedProduct.getProductNumber(), updatedProduct.getName(), updatedProduct.getPrice(), 0);
+        streamBridge.send("productChange-out-0", event);
 
         return updatedProduct;
     }
@@ -53,9 +38,7 @@ public class ProductCommandService {
     public void deleteProduct(String productNumber) {
         productRepository.deleteByProductNumber(productNumber);
 
-        // Publish deletion event to Kafka
-        streamBridge.send("productChange-out-0", new ProductChangedEvent(
-                productNumber, null, 0, 0
-        ));
+        ProductChangedEvent event = new ProductChangedEvent(productNumber, null, 0, 0);
+        streamBridge.send("productChange-out-0", event);
     }
 }

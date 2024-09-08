@@ -20,6 +20,6 @@ public class ProductQueryController {
 
     @GetMapping
     public List<ProductWithStock> getAllProducts() {
-        return productQueryService.getAllProducts();
+        return productQueryService.getAllProductsWithStock();
     }
 }

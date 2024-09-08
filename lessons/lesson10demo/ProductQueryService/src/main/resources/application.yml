@@ -1,11 +1,17 @@
 server:
   port: 9092
 spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: productdb
+
   cloud:
     stream:
       bindings:
-        productChange-in-0:
-          destination: product-changes
+        productChange-in-0: # The consumer that listens to the topic
+          destination: product-changes  # Kafka topic name
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: localhost:9092  # Kafka broker address
